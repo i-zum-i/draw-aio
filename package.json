@@ -1,0 +1,46 @@
+{
+  "name": "ai-diagram-generator",
+  "version": "1.0.0",
+  "description": "AI-powered diagram generator using natural language input",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd packages/backend && npm run dev",
+    "dev:frontend": "cd packages/frontend && npm run dev",
+    "build": "npm run build:backend && npm run build:frontend",
+    "build:backend": "cd packages/backend && npm run build",
+    "build:frontend": "cd packages/frontend && npm run build",
+    "build:production": "npm run build:backend:production && npm run build:frontend:production",
+    "build:backend:production": "cd packages/backend && npm run build:production",
+    "build:frontend:production": "cd packages/frontend && npm run build:production",
+    "start": "concurrently \"npm run start:backend\" \"npm run start:frontend\"",
+    "start:backend": "cd packages/backend && npm run start",
+    "start:frontend": "cd packages/frontend && npm run start",
+    "start:production": "concurrently \"npm run start:backend:production\" \"npm run start:frontend:production\"",
+    "start:backend:production": "cd packages/backend && npm run start:production",
+    "start:frontend:production": "cd packages/frontend && npm run start:production",
+    "test": "npm run test --workspaces",
+    "test:coverage": "npm run test:coverage --workspaces",
+    "lint": "npm run lint --workspaces",
+    "lint:fix": "npm run lint:fix --workspaces",
+    "typecheck": "npm run typecheck --workspaces",
+    "clean": "npm run clean --workspaces",
+    "validate": "npm run typecheck && npm run lint && npm run test",
+    "install:all": "npm install"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "concurrently": "^8.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}

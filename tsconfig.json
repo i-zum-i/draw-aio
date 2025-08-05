@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./packages/frontend/src/*"],
+      "@backend/*": ["./packages/backend/src/*"],
+      "@shared/*": ["./packages/shared/src/*"]
+    }
+  },
+  "include": [
+    "packages/*/src/**/*",
+    "packages/*/types/**/*",
+    "packages/*/*.ts",
+    "packages/*/*.tsx"
+  ],
+  "exclude": [
+    "node_modules",
+    "packages/*/dist",
+    "packages/*/build",
+    ".next"
+  ]
+}
