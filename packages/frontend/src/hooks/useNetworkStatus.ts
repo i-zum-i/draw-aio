@@ -62,16 +62,16 @@ export function useNetworkStatus(): NetworkStatus {
 export function getTimeoutForConnection(connectionType: string): number {
   switch (connectionType) {
     case 'slow-2g':
-      return 60000; // 60秒
+      return 120000; // 120秒（2分）
     case '2g':
-      return 45000; // 45秒
+      return 90000; // 90秒
     case '3g':
-      return 30000; // 30秒
+      return 75000; // 75秒
     case '4g':
     case '5g':
-      return 20000; // 20秒
+      return 60000; // 60秒
     default:
-      return 30000; // デフォルト30秒
+      return 60000; // デフォルト60秒
   }
 }
 

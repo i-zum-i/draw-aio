@@ -16,16 +16,19 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
   const [downloadAttempted, setDownloadAttempted] = useState(false);
 
   const handleImageLoad = () => {
+    console.log('🖼️ ResultDisplay: Image loaded successfully');
     setImageLoading(false);
     setImageError(false);
   };
 
   const handleImageError = () => {
+    console.error('❌ ResultDisplay: Image load failed');
     setImageLoading(false);
     setImageError(true);
   };
 
   const handleImageLoadStart = () => {
+    console.log('🔄 ResultDisplay: Image loading started');
     setImageLoading(true);
     setImageError(false);
   };
@@ -54,6 +57,29 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
       resetDownloadState();
     }
   }, [result?.downloadUrl]); // Reset when downloadUrl changes (new diagram)
+
+  // Debug log image loading states
+  useEffect(() => {
+    console.log('📊 Image states changed:', {
+      imageLoading,
+      imageError,
+      hasResult: !!result,
+      hasImageUrl: !!(result?.imageUrl)
+    });
+  }, [imageLoading, imageError, result]);
+
+  // Debug log when result changes
+  useEffect(() => {
+    if (result) {
+      console.log('🎯 ResultDisplay received result:', {
+        hasImageUrl: !!result.imageUrl,
+        imageUrl: result.imageUrl,
+        hasDownloadUrl: !!result.downloadUrl,
+        downloadUrl: result.downloadUrl,
+        message: result.message
+      });
+    }
+  }, [result]);
 
   return (
     <div className="result-section">
@@ -84,7 +110,7 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
                 )}
                 
                 <OptimizedImage
-                  src={result.imageUrl}
+                  src={result.imageUrl.replace('http://localhost:3001', '')}
                   alt="Generated diagram preview"
                   className="diagram-image"
                   onLoad={handleImageLoad}
@@ -104,7 +130,7 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
                 </p>
                 <div className="download-actions">
                   <a 
-                    href={result.downloadUrl} 
+                    href={result.downloadUrl.replace('http://localhost:3001', '')} 
                     download
                     className="download-link"
                     aria-label=".drawioファイルをダウンロード"

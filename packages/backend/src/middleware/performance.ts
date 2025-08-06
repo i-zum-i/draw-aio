@@ -63,12 +63,14 @@ export const rateLimit = (maxRequests: number = 10, windowMs: number = 60000) =>
 
     const { count, resetTime } = rateLimitStore[clientId];
 
-    // Set rate limit headers
-    res.set({
-      'X-RateLimit-Limit': maxRequests.toString(),
-      'X-RateLimit-Remaining': Math.max(0, maxRequests - count).toString(),
-      'X-RateLimit-Reset': Math.ceil(resetTime / 1000).toString(),
-    });
+    // Set rate limit headers only if not already sent
+    if (!res.headersSent) {
+      res.set({
+        'X-RateLimit-Limit': maxRequests.toString(),
+        'X-RateLimit-Remaining': Math.max(0, maxRequests - count).toString(),
+        'X-RateLimit-Reset': Math.ceil(resetTime / 1000).toString(),
+      });
+    }
 
     if (count > maxRequests) {
       return res.status(429).json({
@@ -138,7 +140,7 @@ export const memoryMonitor = (req: Request, res: Response, next: NextFunction) =
   }
   
   // Add memory info to response headers in development
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' && !res.headersSent) {
     res.set('X-Memory-Usage', `${heapUsedMB}MB`);
   }
   

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
 interface OptimizedImageProps {
   src: string;
@@ -23,52 +23,67 @@ export default function OptimizedImage({
 }: OptimizedImageProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  const handleLoad = useCallback(() => {
+  const handleLoad = () => {
+    console.log('🖼️ Image loaded successfully:', src);
     setIsLoading(false);
     setHasError(false);
     onLoad?.();
-  }, [onLoad]);
+  };
 
-  const handleError = useCallback(() => {
+  const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    console.error('❌ Image load failed:', src, event);
+    console.error('❌ Image element:', event.currentTarget);
     setIsLoading(false);
     setHasError(true);
     onError?.();
-  }, [onError]);
+  };
 
-  const handleLoadStart = useCallback(() => {
+  const handleLoadStart = () => {
+    console.log('🔄 Image loading started:', src);
     setIsLoading(true);
     setHasError(false);
     onLoadStart?.();
-  }, [onLoadStart]);
+  };
 
-  // Preload image with progressive enhancement
+  // Reset states when src changes
   React.useEffect(() => {
-    if (!src) return;
+    console.log('🔄 OptimizedImage src changed:', src);
+    setHasError(false);
+    setIsLoading(true);
 
-    const img = new Image();
-    
-    // Progressive loading: start with low quality placeholder if available
-    const lowQualitySrc = src.replace(/\.(jpg|jpeg|png)$/i, '_thumb.$1');
-    
-    img.onload = () => {
-      setImageSrc(src);
-      handleLoad();
-    };
-    
-    img.onerror = () => {
-      handleError();
-    };
-    
-    handleLoadStart();
-    img.src = src;
-    
-    return () => {
-      img.onload = null;
-      img.onerror = null;
-    };
-  }, [src, handleLoad, handleError, handleLoadStart]);
+    // Debug image element state
+    if (imgRef.current) {
+      const img = imgRef.current;
+      console.log('🔍 Image element state:', {
+        src: img.src,
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight,
+        readyState: img.readyState
+      });
+    }
+  }, [src]);
+
+  // Monitor image element after it's created
+  useEffect(() => {
+    const img = imgRef.current;
+    if (img) {
+      console.log('🔍 Image element created:', {
+        src: img.src,
+        complete: img.complete,
+        naturalWidth: img.naturalWidth,
+        naturalHeight: img.naturalHeight
+      });
+
+      // Check if image is already loaded
+      if (img.complete && img.naturalWidth > 0) {
+        console.log('✅ Image was already loaded');
+        handleLoad();
+      }
+    }
+  }, [src]);
 
   if (hasError) {
     return (
@@ -117,18 +132,21 @@ export default function OptimizedImage({
         </div>
       )}
       
-      {imageSrc && (
-        <img
-          src={imageSrc}
-          alt={alt}
-          className={`optimized-image ${isLoading ? 'loading' : 'loaded'}`}
-          loading="lazy"
-          decoding="async"
-          style={{
-            display: isLoading ? 'none' : 'block',
-          }}
-        />
-      )}
+      <img
+        ref={imgRef}
+        src={src}
+        alt={alt}
+        className={`optimized-image ${isLoading ? 'loading' : 'loaded'}`}
+        onLoad={handleLoad}
+        onError={handleError}
+        onLoadStart={handleLoadStart}
+        loading="eager"
+        decoding="async"
+        style={{
+          display: isLoading ? 'none' : 'block',
+        }}
+        onProgress={(e) => console.log('📈 Image loading progress:', e)}
+      />
       
       <style jsx>{`
         .optimized-image-container {

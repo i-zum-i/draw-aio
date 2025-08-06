@@ -13,10 +13,33 @@ export class DiagramController {
    */
   static initialize(): void {
     try {
+      console.log('🔧 Starting LLM service initialization...');
+      console.log('🔍 Current DiagramController context:', !!this);
+      
+      // Check if API key is available
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      if (!apiKey) {
+        console.error('❌ ANTHROPIC_API_KEY environment variable is not set');
+        throw new Error('ANTHROPIC_API_KEY environment variable is required');
+      }
+      
+      console.log('🔑 API key found, length:', apiKey.length);
+      
+      // Create LLM service instance
+      console.log('🚀 Creating LLM service instance...');
       this.llmService = new LLMService();
-      console.log('LLM service initialized successfully');
+      
+      // Verify the service was created
+      if (!this.llmService) {
+        throw new Error('LLM service instance creation failed');
+      }
+      
+      console.log('✅ LLM service initialized successfully');
+      console.log('🔍 llmService instance:', !!this.llmService);
     } catch (error) {
-      console.error('Failed to initialize LLM service:', error);
+      console.error('❌ Failed to initialize LLM service:', error);
+      // Ensure llmService is null on failure
+      this.llmService = null as any;
       throw error;
     }
   }
@@ -27,9 +50,24 @@ export class DiagramController {
    */
   static async generateDiagram(req: Request, res: Response): Promise<void> {
     try {
+      console.log('🎯 Starting generateDiagram method...');
+      console.log('🔍 DiagramController context:', !!this);
+      console.log('🔍 llmService exists?', !!this.llmService);
+      
       // Ensure LLM service is initialized
       if (!this.llmService) {
-        this.initialize();
+        console.log('LLM service not initialized, initializing now...');
+        try {
+          this.initialize();
+        } catch (initError) {
+          console.error('Failed to initialize LLM service during request:', initError);
+          throw initError;
+        }
+      }
+
+      // Double-check initialization
+      if (!this.llmService) {
+        throw new Error('LLM service is still undefined after initialization attempt');
       }
 
       // Request body is already validated by middleware
@@ -65,8 +103,10 @@ export class DiagramController {
 
       // Generate PNG image
       console.log('Generating PNG image...');
+      console.log('🔍 Headers sent before PNG generation:', res.headersSent);
       const drawioFilePath = fileService.getFilePath(drawioFileId);
       const imageResult = await imageService.generatePNGWithFallback(drawioFilePath);
+      console.log('🔍 Headers sent after PNG generation:', res.headersSent);
       
       let imageUrl: string | undefined;
       let warningMessage: string | undefined;
@@ -89,9 +129,29 @@ export class DiagramController {
         imageUrl,
       };
 
-      res.status(200).json(response);
+      console.log('📤 Sending success response:', {
+        status: response.status,
+        message: response.message,
+        hasDownloadUrl: !!response.downloadUrl,
+        hasImageUrl: !!response.imageUrl,
+        headersSent: res.headersSent
+      });
+
+      // Only send response if headers haven't been sent
+      if (!res.headersSent) {
+        res.status(200).json(response);
+        console.log('✅ Response sent successfully');
+      } else {
+        console.error('❌ Cannot send response - headers already sent');
+      }
     } catch (error) {
       console.error('Error in generateDiagram:', error);
+      
+      // Don't send response if headers already sent
+      if (res.headersSent) {
+        console.error('Cannot send error response - headers already sent');
+        return;
+      }
       
       // Handle LLM specific errors
       if (error instanceof LLMError) {
@@ -106,7 +166,7 @@ export class DiagramController {
       }
 
       // Handle initialization errors
-      if (error instanceof Error && error.message.includes('ANTHROPIC_API_KEY')) {
+      if (error instanceof Error && (error.message.includes('ANTHROPIC_API_KEY') || error.message.includes('initialize'))) {
         const errorResponse: ErrorResponse = {
           status: 'error',
           message: 'AI サービスの設定に問題があります。管理者にお問い合わせください',

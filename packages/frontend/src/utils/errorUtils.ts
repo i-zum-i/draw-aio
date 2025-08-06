@@ -177,7 +177,7 @@ export class ErrorHandler {
 export function fetchWithTimeout(
   url: string, 
   options: RequestInit = {}, 
-  timeoutMs: number = 30000
+  timeoutMs: number = 60000
 ): Promise<Response> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => {
@@ -207,7 +207,7 @@ export async function fetchWithRetry(
   options: RequestInit = {},
   maxRetries: number = 3,
   retryDelay: number = 1000,
-  timeoutMs: number = 30000
+  timeoutMs: number = 60000
 ): Promise<Response> {
   let lastError: Error;
 

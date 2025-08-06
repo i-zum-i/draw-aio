@@ -11,6 +11,8 @@ export interface ImageGenerationResult {
 
 export class ImageService {
   private drawioCliPath: string;
+  private cliAvailabilityCache: { available: boolean; timestamp: number } | null = null;
+  private readonly CACHE_DURATION = 300000; // 5分間キャッシュ（頻繁なチェックを避ける）
 
   constructor(drawioCliPath: string = 'drawio') {
     this.drawioCliPath = drawioCliPath;
@@ -77,16 +79,16 @@ export class ImageService {
   private async executeDrawioCLI(inputPath: string, outputPath: string): Promise<boolean> {
     return new Promise((resolve) => {
       const args = [
-        '--export',
-        '--format', 'png',
-        '--output', outputPath,
-        inputPath
+        inputPath,
+        '-F', 'png',
+        '-o', outputPath
       ];
 
       console.log(`Executing Draw.io CLI: ${this.drawioCliPath} ${args.join(' ')}`);
 
       const process = spawn(this.drawioCliPath, args, {
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true  // Enable shell mode for Windows compatibility
       });
 
       let stdout = '';
@@ -132,28 +134,84 @@ export class ImageService {
   }
 
   /**
-   * Check if Draw.io CLI is available
+   * Check if Draw.io CLI is available with caching
    * @returns Promise<boolean>
    */
   async isDrawioCLIAvailable(): Promise<boolean> {
+    // キャッシュが有効な場合は使用
+    if (this.cliAvailabilityCache) {
+      const now = Date.now();
+      const cacheAge = now - this.cliAvailabilityCache.timestamp;
+      if (cacheAge < this.CACHE_DURATION) {
+        console.log(`Using cached CLI availability result: ${this.cliAvailabilityCache.available} (cache age: ${Math.round(cacheAge/1000)}s)`);
+        return this.cliAvailabilityCache.available;
+      }
+    }
+
+    // 実際にCLIをチェック
+    const available = await this.checkDrawioCLI();
+    
+    // 結果をキャッシュ
+    this.cliAvailabilityCache = {
+      available,
+      timestamp: Date.now()
+    };
+
+    return available;
+  }
+
+  /**
+   * Actually check if Draw.io CLI is available
+   * @returns Promise<boolean>
+   */
+  private async checkDrawioCLI(): Promise<boolean> {
     return new Promise((resolve) => {
+      console.log(`Checking Draw.io CLI availability: ${this.drawioCliPath} --version`);
+      
+      let resolved = false;
+      const resolveOnce = (result: boolean) => {
+        if (!resolved) {
+          resolved = true;
+          resolve(result);
+        }
+      };
+
       const process = spawn(this.drawioCliPath, ['--version'], {
-        stdio: ['pipe', 'pipe', 'pipe']
+        stdio: ['pipe', 'pipe', 'pipe'],
+        shell: true  // Enable shell mode for Windows compatibility
+      });
+
+      let stdout = '';
+      let stderr = '';
+
+      process.stdout?.on('data', (data) => {
+        stdout += data.toString();
+      });
+
+      process.stderr?.on('data', (data) => {
+        stderr += data.toString();
       });
 
       process.on('close', (code) => {
-        resolve(code === 0);
+        console.log(`Draw.io CLI check completed with code: ${code}`);
+        if (stdout) console.log('CLI version stdout:', stdout.trim());
+        if (stderr) console.log('CLI version stderr:', stderr.trim());
+        clearTimeout(timeout);
+        resolveOnce(code === 0);
       });
 
-      process.on('error', () => {
-        resolve(false);
+      process.on('error', (error) => {
+        console.error('Draw.io CLI check error:', error.message);
+        clearTimeout(timeout);
+        resolveOnce(false);
       });
 
-      // Timeout after 5 seconds
-      setTimeout(() => {
+      // Timeout after 10 seconds (increased for Windows compatibility)
+      const timeout = setTimeout(() => {
+        console.error('Draw.io CLI check timed out');
         process.kill('SIGTERM');
-        resolve(false);
-      }, 5000);
+        resolveOnce(false);
+      }, 10000);
     });
   }
 

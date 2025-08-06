@@ -35,6 +35,19 @@ export class FileController {
       res.setHeader('Content-Disposition', `${disposition}; filename="${fileInfo.originalName}"`);
       res.setHeader('Cache-Control', 'private, max-age=3600'); // Cache for 1 hour
       
+      // Add CORS headers for cross-origin requests
+      const allowedOrigin = process.env.FRONTEND_URL || 'http://localhost:3000';
+      res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
+      res.setHeader('Access-Control-Allow-Methods', 'GET');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      
+      console.log('📁 Serving file:', {
+        fileId,
+        type: fileInfo.type,
+        contentType,
+        corsOrigin: allowedOrigin
+      });
+      
       // Send the file
       res.sendFile(fileInfo.path, (err) => {
         if (err) {

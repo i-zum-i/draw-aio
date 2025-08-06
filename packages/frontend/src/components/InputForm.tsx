@@ -5,10 +5,12 @@ import ErrorMessage from './ErrorMessage';
 
 interface InputFormProps {
   onSubmit: (text: string) => void;
+  onClear: () => void;
   isLoading: boolean;
+  hasResult: boolean;
 }
 
-export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
+export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: InputFormProps) {
   const [inputText, setInputText] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -39,6 +41,12 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
     }
   };
 
+  const handleClear = () => {
+    setInputText('');
+    setValidationError(null);
+    onClear();
+  };
+
   return (
     <div className="input-section">
       {validationError && (
@@ -67,20 +75,30 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
             {inputText.length}/10,000文字
           </span>
         </div>
-        <button 
-          className={`generate-button ${isLoading ? 'loading' : ''}`}
-          type="submit"
-          disabled={isLoading || !inputText.trim()}
-        >
-          {isLoading ? (
-            <>
-              <span className="spinner"></span>
-              生成中...
-            </>
-          ) : (
-            '図を作成'
-          )}
-        </button>
+        <div className="button-container">
+          <button 
+            className={`generate-button ${isLoading ? 'loading' : ''}`}
+            type="submit"
+            disabled={isLoading || !inputText.trim()}
+          >
+            {isLoading ? (
+              <>
+                <span className="spinner"></span>
+                生成中...
+              </>
+            ) : (
+              '図を作成'
+            )}
+          </button>
+          <button
+            className="clear-button"
+            type="button"
+            onClick={handleClear}
+            disabled={isLoading || !hasResult}
+          >
+            クリア
+          </button>
+        </div>
       </form>
       
       <style jsx>{`
@@ -147,14 +165,21 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
           color: #666;
         }
         
+        .button-container {
+          display: flex;
+          gap: 1rem;
+          justify-content: center;
+          align-items: center;
+          margin: 0.5rem auto 0;
+        }
+        
         .generate-button {
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 0.5rem;
-          width: 100%;
+          flex: 1;
           max-width: 200px;
-          margin: 0.5rem auto 0;
           padding: 0.75rem 1.5rem;
           background: #007bff;
           color: white;
@@ -199,6 +224,39 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
           100% { transform: rotate(360deg); }
         }
         
+        .clear-button {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex: 1;
+          max-width: 200px;
+          padding: 0.75rem 1.5rem;
+          background: #6c757d;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 1rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          min-height: 44px;
+        }
+        
+        .clear-button:hover:not(:disabled) {
+          background: #5a6268;
+        }
+        
+        .clear-button:active:not(:disabled) {
+          transform: translateY(1px);
+        }
+        
+        .clear-button:disabled {
+          background: #adb5bd;
+          cursor: not-allowed;
+          opacity: 0.6;
+          transform: none;
+        }
+        
         /* Responsive Design */
         @media (max-width: 768px) {
           .input-section {
@@ -210,7 +268,13 @@ export default function InputForm({ onSubmit, isLoading }: InputFormProps) {
             font-size: 16px; /* Prevents zoom on iOS */
           }
           
-          .generate-button {
+          .button-container {
+            flex-direction: column;
+            gap: 0.75rem;
+          }
+          
+          .generate-button,
+          .clear-button {
             max-width: none;
             width: 100%;
           }

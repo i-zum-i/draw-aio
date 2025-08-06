@@ -44,18 +44,27 @@ export class LLMService {
   private readonly MAX_CACHE_SIZE = 100;
 
   constructor() {
+    console.log('🔧 LLMService constructor called');
     const apiKey = process.env.ANTHROPIC_API_KEY;
+    console.log('🔑 API key in constructor:', apiKey ? `Found (${apiKey.length} chars)` : 'Not found');
+
     if (!apiKey) {
+      console.error('❌ ANTHROPIC_API_KEY not found in LLMService constructor');
       throw new Error('ANTHROPIC_API_KEY environment variable is required');
     }
 
+    console.log('🚀 Creating Anthropic client...');
     this.client = new Anthropic({
       apiKey: apiKey,
       timeout: 25000, // 25 second timeout for API calls
     });
 
+    console.log('✅ Anthropic client created successfully');
+
     // Clean cache periodically
     setInterval(() => this.cleanCache(), 10 * 60 * 1000); // Every 10 minutes
+
+    console.log('✅ LLMService constructor completed');
   }
 
   /**
@@ -76,8 +85,8 @@ export class LLMService {
       const userPrompt = this.buildUserPrompt(prompt);
 
       const response = await this.client.messages.create({
-        model: 'claude-3-haiku-20240307', // Using Haiku for faster responses
-        max_tokens: 3000, // Reduced for better performance
+        model: 'claude-sonnet-4-20250514', // Claude Sonnet 4
+        max_tokens: 8192, // Claude Sonnet 4の最大トークン数
         temperature: 0.2, // Lower temperature for more consistent results
         system: systemPrompt,
         messages: [
@@ -107,7 +116,7 @@ export class LLMService {
       return xml;
     } catch (error) {
       console.error('Error generating Draw.io XML:', error);
-      
+
       // Re-throw LLMError as-is
       if (error instanceof LLMError) {
         throw error;
@@ -140,6 +149,24 @@ export class LLMService {
 4. 適切な座標とサイズを設定してください
 5. 日本語テキストを正しく処理してください
 6. フローチャート、組織図、システム図など、適切な図の種類を選択してください
+7. AWSの構成図を作成する場合は以下の”AWS構成図作成ルール”に従ってください
+
+AWS構成図作成ルール：
+ 1. アイコンはdraw.ioの"AWS 2025"を利用してください。
+ 2. 境界線やアイコンに文字を重ねないでください。余白を作り、視認性を上げることに努めてください。
+ 3. アイコンのサイズは48×48で統一してください。
+ 4. アイコン以下の説明分は以下に統一してください。
+    5-1. サービス名
+    5-2. リソース名（IDは記載しないこと）
+ 5. 境界線は以下の通り表現してください。
+    5-1. AWS Cloud
+    5-2. Region
+    5-3. VPC ※末尾に()でCIDRを記入
+    5-4. Availability Zone
+    5-5. Subnet ※末尾に()でCIDRを記入
+    5-6. Security Group
+ 6. 拡張性を考慮して、境界線の余白は多めにしてください。
+ 7. 視認性をよくしたいのでアイコン同士はなるべく近くに配置してください。
 
 出力形式:
 - XMLのみを出力してください（説明文は不要）
@@ -204,9 +231,9 @@ XMLのみを出力してください：`;
     }
 
     // Timeout errors (check before connection errors)
-    if (errorMessage.includes('timeout') && 
-        !errorMessage.includes('connection') && 
-        !errorMessage.includes('network')) {
+    if (errorMessage.includes('timeout') &&
+      !errorMessage.includes('connection') &&
+      !errorMessage.includes('network')) {
       return new LLMError(
         'AI サービスの応答がタイムアウトしました。再試行してください',
         LLMErrorCode.TIMEOUT_ERROR,
@@ -215,11 +242,11 @@ XMLのみを出力してください：`;
     }
 
     // Connection/network errors
-    if (errorMessage.includes('network') || 
-        errorMessage.includes('connection') || 
-        errorMessage.includes('econnreset') ||
-        errorMessage.includes('enotfound') ||
-        errorMessage.includes('fetch')) {
+    if (errorMessage.includes('network') ||
+      errorMessage.includes('connection') ||
+      errorMessage.includes('econnreset') ||
+      errorMessage.includes('enotfound') ||
+      errorMessage.includes('fetch')) {
       return new LLMError(
         'AI サービスに接続できません。ネットワーク接続を確認してから再試行してください',
         LLMErrorCode.CONNECTION_ERROR,
@@ -228,10 +255,10 @@ XMLのみを出力してください：`;
     }
 
     // Authentication errors
-    if (errorMessage.includes('unauthorized') || 
-        errorMessage.includes('authentication') || 
-        errorMessage.includes('api key') ||
-        errorMessage.includes('401')) {
+    if (errorMessage.includes('unauthorized') ||
+      errorMessage.includes('authentication') ||
+      errorMessage.includes('api key') ||
+      errorMessage.includes('401')) {
       return new LLMError(
         'AI サービスの認証に失敗しました。設定を確認してください',
         LLMErrorCode.API_KEY_MISSING,
@@ -252,9 +279,9 @@ XMLのみを出力してください：`;
    */
   private extractXMLFromResponse(response: string): string {
     // Look for XML content between ```xml tags or direct XML
-    const xmlMatch = response.match(/```xml\s*([\s\S]*?)\s*```/) || 
-                    response.match(/(<mxfile[\s\S]*?<\/mxfile>)/);
-    
+    const xmlMatch = response.match(/```xml\s*([\s\S]*?)\s*```/) ||
+      response.match(/(<mxfile[\s\S]*?<\/mxfile>)/);
+
     if (xmlMatch) {
       return xmlMatch[1].trim();
     }
@@ -308,7 +335,7 @@ XMLのみを出力してください：`;
       const openTags = (xml.match(/<[^\/][^>]*>/g) || []).length;
       const closeTags = (xml.match(/<\/[^>]*>/g) || []).length;
       const selfClosingTags = (xml.match(/<[^>]*\/>/g) || []).length;
-      
+
       // Self-closing tags count as both open and close
       if (openTags !== closeTags + selfClosingTags) {
         console.warn('XML tag balance warning - may indicate malformed XML');
@@ -326,7 +353,7 @@ XMLのみを出力してください：`;
       if (error instanceof LLMError) {
         throw error;
       }
-      
+
       throw new LLMError(
         'XMLの検証中にエラーが発生しました',
         LLMErrorCode.INVALID_XML,

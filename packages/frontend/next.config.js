@@ -4,6 +4,8 @@ const nextConfig = {
   experimental: {
     optimizeCss: true,
     optimizePackageImports: ['react', 'react-dom'],
+    // Increase proxy timeout for development
+    proxyTimeout: 120000, // 2 minutes for PNG generation
   },
   
   // Compression and minification
@@ -35,7 +37,7 @@ const nextConfig = {
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
-  // API proxy
+  // API proxy with extended timeout
   async rewrites() {
     return [
       {
@@ -43,6 +45,12 @@ const nextConfig = {
         destination: 'http://localhost:3001/api/:path*', // Backend API proxy
       },
     ];
+  },
+  
+  // Server configuration
+  serverRuntimeConfig: {
+    // Increase timeout for API routes (in milliseconds)
+    apiTimeout: 120000, // 2 minutes
   },
   
   // Headers for performance

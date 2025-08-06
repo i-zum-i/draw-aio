@@ -49,8 +49,17 @@ export default function MainPage() {
       });
     }
 
+    const timeout = getTimeoutForConnection(networkStatus.connectionType);
+    const startTime = Date.now();
+    
     try {
-      const timeout = getTimeoutForConnection(networkStatus.connectionType);
+      console.log('🌐 Network status:', {
+        connectionType: networkStatus.connectionType,
+        isOnline: networkStatus.isOnline,
+        isSlowConnection: networkStatus.isSlowConnection,
+        timeoutMs: timeout
+      });
+      
       const response = await fetchWithRetry('/api/generate-diagram', {
         method: 'POST',
         headers: {
@@ -58,6 +67,13 @@ export default function MainPage() {
         },
         body: JSON.stringify({ prompt: text }),
       }, 2, 1000, timeout); // 最大2回再試行、1秒間隔、動的タイムアウト
+      
+      const duration = Date.now() - startTime;
+      console.log('⏱️ Request completed:', {
+        duration: `${duration}ms`,
+        timeoutUsed: `${timeout}ms`,
+        status: response.status
+      });
 
       if (response.ok) {
         const data: DiagramResponse = await response.json();
@@ -80,7 +96,12 @@ export default function MainPage() {
         setErrorInfo(errorInfo);
       }
     } catch (err) {
-      console.error('API request failed:', err);
+      const duration = Date.now() - startTime;
+      console.error('❌ API request failed:', {
+        error: err,
+        duration: `${duration}ms`,
+        timeoutUsed: `${timeout}ms`
+      });
       const errorInfo = ErrorHandler.handleError(err);
       setErrorInfo(errorInfo);
     } finally {
@@ -99,6 +120,13 @@ export default function MainPage() {
     setErrorInfo(null);
   };
 
+  const handleClear = () => {
+    setResult(null);
+    setErrorInfo(null);
+    setRetryCount(0);
+    setLastPrompt('');
+  };
+
   return (
     <div className="main-page">
       <ConnectionStatus />
@@ -113,7 +141,12 @@ export default function MainPage() {
             </p>
           </div>
           
-          <InputForm onSubmit={handleFormSubmit} isLoading={isLoading} />
+          <InputForm 
+            onSubmit={handleFormSubmit} 
+            onClear={handleClear}
+            isLoading={isLoading} 
+            hasResult={!!result}
+          />
           
           {errorInfo && (
             <ErrorMessage 
