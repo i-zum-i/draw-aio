@@ -1,169 +1,168 @@
-# AI図表生成システム
+# AI Diagram Generator
 
-自然言語の説明からDraw.io形式の図表を自動生成するAI搭載Webアプリケーションです。
+An AI-powered web application that automatically generates Draw.io format diagrams from natural language descriptions.
 
-## プロジェクト概要
+## Project Overview
 
-本システムは、ユーザーが日本語で図表の内容を説明するだけで、編集可能な.drawioファイルとPNG画像を自動生成するWebアプリケーションです。大規模言語モデル（Claude）を活用してユーザーの意図を解釈し、適切な視覚的表現を生成することで、ビジネス図や技術図の作成にかかる時間と労力を大幅に削減します。
+This system allows users to generate editable .drawio files and PNG images simply by describing diagram content in natural language. Leveraging large language models (Claude), it interprets user intentions and generates appropriate visual representations, significantly reducing the time and effort required to create business and technical diagrams.
 
-### 主な特徴
+### Key Features
 
-- **自然言語入力**: 日本語で図表の内容を説明するだけで図を生成
-- **即座のプレビュー**: 生成されたPNG画像をブラウザで即座に確認
-- **編集可能ファイル**: Draw.ioで開いて編集できる.drawioファイルをダウンロード
-- **ログイン不要**: 認証なしで誰でもすぐに利用可能
-- **レスポンシブ対応**: PC・タブレット・スマートフォンで利用可能
+- **Natural Language Input**: Generate diagrams by describing content in natural language
+- **Instant Preview**: View generated PNG images immediately in the browser
+- **Editable Files**: Download .drawio files that can be opened and edited in Draw.io
+- **No Login Required**: Anyone can use it immediately without authentication
+- **Responsive Design**: Works on PC, tablet, and smartphone
 
-## プロジェクト構成
+## Project Structure
 
-TypeScriptモノレポ構成で、フロントエンドとバックエンドを統合管理しています：
+TypeScript monorepo structure with integrated frontend and backend management:
 
 ```
-ai-diagram-generator/
+draw-aio/
 ├── packages/
-│   ├── backend/                    # mastraベースのAPIサーバー
+│   ├── backend/                    # Express.js API server
 │   │   ├── src/
-│   │   │   ├── controllers/        # APIエンドポイント
-│   │   │   ├── services/           # ビジネスロジック
-│   │   │   │   ├── llmService.ts   # Claude LLM連携
-│   │   │   │   ├── fileService.ts  # ファイル管理
-│   │   │   │   └── imageService.ts # PNG画像生成
-│   │   │   ├── middleware/         # パフォーマンス・セキュリティ
-│   │   │   ├── types/              # TypeScript型定義
-│   │   │   └── utils/              # ユーティリティ関数
+│   │   │   ├── controllers/        # API endpoints
+│   │   │   ├── services/           # Business logic
+│   │   │   │   ├── llmService.ts   # Claude LLM integration
+│   │   │   │   ├── fileService.ts  # File management
+│   │   │   │   └── imageService.ts # PNG image generation
+│   │   │   ├── middleware/         # Performance & security
+│   │   │   ├── types/              # TypeScript type definitions
+│   │   │   └── utils/              # Utility functions
 │   │   └── package.json
-│   └── frontend/                   # Next.js Reactアプリ
+│   └── frontend/                   # Next.js React app
 │       ├── src/
 │       │   ├── app/                # Next.js App Router
-│       │   ├── components/         # Reactコンポーネント
-│       │   │   ├── MainPage.tsx    # メイン画面
-│       │   │   ├── InputForm.tsx   # 入力フォーム
-│       │   │   ├── ResultDisplay.tsx # 結果表示
-│       │   │   └── ErrorMessage.tsx  # エラー処理
-│       │   ├── hooks/              # カスタムフック
-│       │   ├── types/              # TypeScript型定義
-│       │   └── utils/              # ユーティリティ関数
+│       │   ├── components/         # React components
+│       │   │   ├── MainPage.tsx    # Main screen
+│       │   │   ├── InputForm.tsx   # Input form
+│       │   │   ├── ResultDisplay.tsx # Result display
+│       │   │   └── ErrorMessage.tsx  # Error handling
+│       │   ├── hooks/              # Custom hooks
+│       │   ├── types/              # TypeScript type definitions
+│       │   └── utils/              # Utility functions
 │       └── package.json
-├── scripts/                        # デプロイメントスクリプト
-├── docker-compose.yml              # 開発環境用Docker設定
-├── docker-compose.prod.yml         # 本番環境用Docker設定
-├── Dockerfile                      # マルチステージDockerビルド
-└── nginx.conf                      # リバースプロキシ設定
+├── scripts/                        # Deployment scripts
+├── docker-compose.yml              # Development Docker settings
+├── docker-compose.prod.yml         # Production Docker settings
+├── Dockerfile                      # Multi-stage Docker build
+└── nginx.conf                      # Reverse proxy settings
 ```
 
-## 技術スタック
+## Technology Stack
 
-### フロントエンド
-- **React 18** - UIライブラリ
-- **Next.js 14** - Reactフレームワーク（App Router使用）
-- **TypeScript** - 型安全な開発
-- **CSS-in-JS** - スタイリング（styled-jsx使用）
+### Frontend
+- **React 18** - UI library
+- **Next.js 14** - React framework (using App Router)
+- **TypeScript** - Type-safe development
+- **CSS-in-JS** - Styling (using styled-jsx)
 
-### バックエンド
-- **Node.js 18+** - サーバーランタイム
-- **mastra** - LLMアプリケーション構築フレームワーク
-- **Express.js** - Webフレームワーク
-- **TypeScript** - 型安全な開発
+### Backend
+- **Node.js 18+** - Server runtime
+- **Express.js** - Web framework
+- **TypeScript** - Type-safe development
 
-### AI・図表生成
-- **Claude (Anthropic)** - 自然言語処理・XML生成
-- **Draw.io CLI** - PNG画像変換
-- **Zod** - データバリデーション
+### AI & Diagram Generation
+- **Claude (Anthropic)** - Natural language processing & XML generation
+- **Draw.io CLI** - PNG image conversion
+- **Zod** - Data validation
 
-### インフラ・デプロイ
-- **Docker & Docker Compose** - コンテナ化
-- **Nginx** - リバースプロキシ・ロードバランサー
-- **Jest** - テストフレームワーク
+### Infrastructure & Deployment
+- **Docker & Docker Compose** - Containerization
+- **Nginx** - Reverse proxy & load balancer
+- **Jest** - Testing framework
 
-## 開発環境のセットアップ
+## Development Environment Setup
 
-### 前提条件
+### Prerequisites
 
-- Node.js 18以上
-- npm 9以上
-- Draw.io CLI（PNG変換用）
-- Docker & Docker Compose（本番環境用）
+- Node.js 18 or higher
+- npm 9 or higher
+- Draw.io CLI (for PNG conversion)
+- Docker & Docker Compose (for production environment)
 
-### インストール手順
+### Installation Steps
 
-1. **リポジトリのクローン**:
+1. **Clone the repository**:
 ```bash
 git clone <repository-url>
-cd ai-diagram-generator
+cd draw-aio
 ```
 
-2. **依存関係のインストール**:
+2. **Install dependencies**:
 ```bash
 npm install
 npm install --workspaces
 ```
 
-3. **環境変数の設定**:
+3. **Set up environment variables**:
 ```bash
-# バックエンド環境変数
+# Backend environment variables
 cp packages/backend/.env.example packages/backend/.env
-# packages/backend/.env を編集してANTHROPIC_API_KEYを設定
+# Edit packages/backend/.env to set ANTHROPIC_API_KEY
 
-# フロントエンド環境変数
+# Frontend environment variables
 cp packages/frontend/.env.example packages/frontend/.env
 ```
 
-4. **Draw.io CLIのインストール**:
+4. **Install Draw.io CLI**:
 ```bash
 npm install -g @drawio/drawio-desktop-cli
 ```
 
-5. **開発サーバーの起動**:
+5. **Start development server**:
 ```bash
 npm run dev
 ```
 
-アプリケーションは以下のURLでアクセス可能です：
-- フロントエンド: http://localhost:3000
-- バックエンドAPI: http://localhost:3001
+The application will be accessible at the following URLs:
+- Frontend: http://localhost:3000
+- Backend API: http://localhost:3001
 
-### 個別起動
+### Individual Startup
 
 ```bash
-# バックエンドのみ
+# Backend only
 npm run dev:backend
 
-# フロントエンドのみ
+# Frontend only
 npm run dev:frontend
 ```
 
-## ビルドとテスト
+## Build and Testing
 
-### 開発用ビルド
+### Development Build
 ```bash
 npm run build
 ```
 
-### 本番用ビルド
+### Production Build
 ```bash
 npm run build:production
 ```
 
-### テスト実行
+### Running Tests
 ```bash
-# 全テスト実行
+# Run all tests
 npm test
 
-# カバレッジ付きテスト
+# Run tests with coverage
 npm run test:coverage
 
-# 型チェック
+# Type checking
 npm run typecheck
 
-# リンティング
+# Linting
 npm run lint
 ```
 
-## 本番環境デプロイ
+## Production Deployment
 
-### Dockerを使用したデプロイ
+### Docker Deployment
 
-1. **本番環境のセットアップ**:
+1. **Production environment setup**:
 ```bash
 # Linux/Mac
 ./scripts/setup-production.sh
@@ -172,15 +171,15 @@ npm run lint
 .\scripts\setup-production.ps1
 ```
 
-2. **環境変数の設定**:
+2. **Configure environment variables**:
 ```bash
-# .env ファイルを編集
+# Edit .env file
 ANTHROPIC_API_KEY=your_actual_api_key
 FRONTEND_URL=https://your-domain.com
 NEXT_PUBLIC_API_URL=https://api.your-domain.com
 ```
 
-3. **デプロイ実行**:
+3. **Execute deployment**:
 ```bash
 # Linux/Mac
 ./scripts/deploy.sh
@@ -189,142 +188,147 @@ NEXT_PUBLIC_API_URL=https://api.your-domain.com
 .\scripts\deploy.ps1
 ```
 
-### 利用可能なスクリプト
+### Available Scripts
 
-#### 開発用
-- `npm run dev` - 開発サーバー起動
-- `npm run build` - 開発用ビルド
-- `npm run test` - テスト実行
-- `npm run lint` - リンティング実行
+#### Development
+- `npm run dev` - Start development server
+- `npm run build` - Development build
+- `npm run test` - Run tests
+- `npm run lint` - Run linting
 
-#### 本番用
-- `npm run build:production` - 本番用ビルド
-- `npm run start:production` - 本番サーバー起動
-- `npm run validate` - 型チェック・リント・テストの一括実行
-- `npm run typecheck` - TypeScript型チェック
+#### Production
+- `npm run build:production` - Production build
+- `npm run start:production` - Start production server
+- `npm run validate` - Run type checking, linting, and tests together
+- `npm run typecheck` - TypeScript type checking
 
-## パフォーマンス最適化
+## Performance Optimization
 
-本プロジェクトには以下の最適化機能が含まれています：
+This project includes the following optimization features:
 
-### フロントエンド最適化
-- **バンドルサイズ最適化**: Next.js最適化機能、webpack bundle analyzer
-- **画像読み込み最適化**: 遅延読み込み、プログレッシブ読み込み、最適化画像コンポーネント
-- **レスポンシブ対応**: モバイルファースト設計
+### Frontend Optimization
+- **Bundle Size Optimization**: Next.js optimization features, webpack bundle analyzer
+- **Image Loading Optimization**: Lazy loading, progressive loading, optimized image components
+- **Responsive Design**: Mobile-first design
 
-### バックエンド最適化
-- **APIレスポンス最適化**: LLMレスポンスキャッシュ、レート制限、圧縮
-- **パフォーマンス監視**: レスポンス時間測定、メモリ使用量監視
-- **エラーハンドリング**: 包括的なエラー処理とユーザーフレンドリーなメッセージ
+### Backend Optimization
+- **API Response Optimization**: LLM response caching, rate limiting, compression
+- **Performance Monitoring**: Response time measurement, memory usage monitoring
+- **Error Handling**: Comprehensive error handling and user-friendly messages
 
-### セキュリティ
-- **セキュリティヘッダー**: Helmet、CORS、CSP設定
-- **レート制限**: API呼び出し制限
-- **入力検証**: Zodによるデータバリデーション
+### Security
+- **Security Headers**: Helmet, CORS, CSP configuration
+- **Rate Limiting**: API call restrictions
+- **Input Validation**: Data validation with Zod
 
-### 監視・ログ
-- **ヘルスチェック**: サービス稼働状況監視
-- **パフォーマンスログ**: 処理時間・エラー率の記録
-- **メモリ監視**: メモリ使用量の追跡
+### Monitoring & Logging
+- **Health Checks**: Service status monitoring
+- **Performance Logs**: Processing time and error rate recording
+- **Memory Monitoring**: Memory usage tracking
 
-## システム機能
+## System Features
 
-### 主要機能
+### Core Features
 
-1. **図表作成指示機能**
-   - 日本語自然言語による図表内容の入力
-   - リアルタイム入力検証
-   - 処理状況の可視化
+1. **Diagram Creation Input**
+   - Natural language diagram content input
+   - Real-time input validation
+   - Processing status visualization
 
-2. **AI図表生成機能**
-   - Claude LLMによる自然言語解釈
-   - Draw.io互換XML生成
-   - エラーハンドリングと再試行機能
+2. **AI Diagram Generation**
+   - Natural language interpretation by Claude LLM
+   - Draw.io compatible XML generation
+   - Error handling and retry functionality
 
-3. **画像プレビュー機能**
-   - PNG画像の即座生成・表示
-   - 最適化された画像読み込み
-   - レスポンシブ画像表示
+3. **Image Preview**
+   - Instant PNG image generation and display
+   - Optimized image loading
+   - Responsive image display
 
-4. **ファイルダウンロード機能**
-   - 編集可能な.drawioファイル提供
-   - 一時URL生成によるセキュアなダウンロード
-   - ファイル管理とクリーンアップ
+4. **File Download**
+   - Editable .drawio file provision
+   - Secure download via temporary URL generation
+   - File management and cleanup
 
-### 対応図表タイプ
+### Supported Diagram Types
 
-- フローチャート
-- 組織図
-- システム構成図
-- ネットワーク図
-- ER図
-- UML図
-- マインドマップ
-- その他のビジネス図表
+- Flowcharts
+- Organization charts
+- System architecture diagrams
+- Network diagrams
+- ER diagrams
+- UML diagrams
+- Mind maps
+- Other business diagrams
 
-## API仕様
+## API Specification
 
-### 図表生成API
+### Diagram Generation API
 
-**エンドポイント**: `POST /api/generate-diagram`
+**Endpoint**: `POST /api/generate-diagram`
 
-**リクエスト**:
+**Request**:
 ```json
 {
-  "prompt": "作成したい図表の日本語説明"
+  "prompt": "Natural language description of the diagram to create"
 }
 ```
 
-**成功レスポンス**:
+**Success Response**:
 ```json
 {
   "status": "success",
-  "imageUrl": "生成されたPNG画像のURL",
-  "downloadUrl": "生成された.drawioファイルのダウンロードURL",
-  "message": "図表が正常に生成されました"
+  "imageUrl": "URL of the generated PNG image",
+  "downloadUrl": "Download URL of the generated .drawio file",
+  "message": "Diagram generated successfully"
 }
 ```
 
-**エラーレスポンス**:
+**Error Response**:
 ```json
 {
   "status": "error",
-  "message": "エラーの詳細説明",
+  "message": "Detailed error description",
   "code": "ERROR_CODE"
 }
 ```
 
-## トラブルシューティング
+## Troubleshooting
 
-### よくある問題
+### Common Issues
 
-1. **Draw.io CLIが見つからない**
+1. **Draw.io CLI not found**
    ```bash
    npm install -g @drawio/drawio-desktop-cli
    ```
 
-2. **ANTHROPIC_API_KEYが設定されていない**
-   - `packages/backend/.env`ファイルでAPI キーを設定してください
+2. **ANTHROPIC_API_KEY not configured**
+   - Set the API key in the `packages/backend/.env` file
 
-3. **ポートが使用中**
-   - デフォルトポート（3000, 3001）が使用中の場合は環境変数で変更可能
+3. **Port already in use**
+   - Default ports (3000, 3001) can be changed via environment variables if in use
 
-4. **Docker関連の問題**
-   - Docker Desktopが起動していることを確認
-   - `docker-compose down`で既存コンテナを停止
+4. **Docker-related issues**
+   - Ensure Docker Desktop is running
+   - Stop existing containers with `docker-compose down`
 
-## ライセンス
+## License
 
-このプロジェクトはMITライセンスの下で公開されています。
+This project is released under the MIT License.
 
-## 貢献
+## Contributing
 
-プルリクエストやイシューの報告を歓迎します。開発に参加する前に、以下を実行してください：
+Pull requests and issue reports are welcome. Before participating in development, please run:
 
 ```bash
-npm run validate  # 型チェック、リント、テストの実行
+npm run validate  # Run type checking, linting, and tests
 ```
 
-## サポート
+## Support
 
-技術的な質問やバグレポートは、GitHubのIssuesページでお願いします。
+For technical questions and bug reports, please use the GitHub Issues page.
+
+## Language Support
+
+- **English**: This README
+- **Japanese**: See [README_ja.md](./README_ja.md) for Japanese documentation
