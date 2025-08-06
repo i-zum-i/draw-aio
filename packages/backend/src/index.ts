@@ -16,15 +16,7 @@ import {
 } from './middleware/performance';
 
 // Load environment variables
-console.log('📁 Current working directory:', process.cwd());
 dotenv.config({ path: path.join(__dirname, '../.env') });
-
-// Debug environment variables
-console.log('🔍 Environment variables loaded:');
-console.log('- NODE_ENV:', process.env.NODE_ENV);
-console.log('- PORT:', process.env.PORT);
-console.log('- ANTHROPIC_API_KEY:', process.env.ANTHROPIC_API_KEY ? `Set (${process.env.ANTHROPIC_API_KEY.length} chars)` : 'Not set');
-console.log('- FRONTEND_URL:', process.env.FRONTEND_URL);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -110,11 +102,10 @@ app.use(errorHandler);
 // Initialize services
 async function initializeServices() {
   try {
-    console.log('🔧 Initializing services...');
     DiagramController.initialize();
-    console.log('✅ All services initialized successfully');
   } catch (error) {
-    console.error('❌ Failed to initialize services:', error);
+    // Keep error logging for server initialization as it's critical
+    console.error('Failed to initialize services:', error);
     process.exit(1);
   }
 }
@@ -127,29 +118,23 @@ async function startServer() {
     
     // Then start server
     const server = app.listen(PORT, () => {
-      console.log(`🚀 AI Diagram Generator Backend running on port ${PORT}`);
-      console.log(`📊 Health check available at http://localhost:${PORT}/health`);
-      console.log(`🎨 API endpoints available at http://localhost:${PORT}/api`);
+      // Keep startup logging for operational monitoring
+      console.log(`AI Diagram Generator Backend running on port ${PORT}`);
     });
 
     // Graceful shutdown handlers
     process.on('SIGTERM', () => {
-      console.log('SIGTERM received, shutting down gracefully');
-      server.close(() => {
-        console.log('Process terminated');
-      });
+      server.close();
     });
 
     process.on('SIGINT', () => {
-      console.log('SIGINT received, shutting down gracefully');
-      server.close(() => {
-        console.log('Process terminated');
-      });
+      server.close();
     });
 
     return server;
   } catch (error) {
-    console.error('❌ Failed to start server:', error);
+    // Keep error logging for server startup as it's critical
+    console.error('Failed to start server:', error);
     process.exit(1);
   }
 }

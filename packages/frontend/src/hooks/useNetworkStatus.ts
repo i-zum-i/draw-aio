@@ -14,10 +14,10 @@ export function useNetworkStatus(): NetworkStatus {
   const [connectionType, setConnectionType] = useState('unknown');
 
   useEffect(() => {
-    // 初期状態を設定
+    // Set initial state
     setIsOnline(navigator.onLine);
 
-    // Connection APIが利用可能な場合
+    // If Connection API is available
     if ('connection' in navigator) {
       const connection = (navigator as any).connection;
       if (connection) {
@@ -57,30 +57,30 @@ export function useNetworkStatus(): NetworkStatus {
 }
 
 /**
- * ネットワーク状態に基づいてタイムアウト時間を調整
+ * Adjust timeout based on network status
  */
 export function getTimeoutForConnection(connectionType: string): number {
   switch (connectionType) {
     case 'slow-2g':
-      return 120000; // 120秒（2分）
+      return 120000; // 120 seconds (2 minutes)
     case '2g':
-      return 90000; // 90秒
+      return 90000; // 90 seconds
     case '3g':
-      return 75000; // 75秒
+      return 75000; // 75 seconds
     case '4g':
     case '5g':
-      return 60000; // 60秒
+      return 60000; // 60 seconds
     default:
-      return 60000; // デフォルト60秒
+      return 60000; // Default 60 seconds
   }
 }
 
 /**
- * ネットワーク状態をテストする
+ * Test network connection status
  */
 export async function testNetworkConnection(): Promise<boolean> {
   try {
-    // 小さなリクエストでネットワーク状態をテスト
+    // Test network status with a small request
     const response = await fetch('/api/health', {
       method: 'HEAD',
       cache: 'no-cache'

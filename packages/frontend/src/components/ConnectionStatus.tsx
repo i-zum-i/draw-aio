@@ -14,7 +14,7 @@ export default function ConnectionStatus({ className = '' }: ConnectionStatusPro
     const handleOnline = () => {
       setIsOnline(true);
       setShowStatus(true);
-      // オンラインになったら3秒後に非表示
+      // Hide status after 3 seconds when coming back online
       setTimeout(() => setShowStatus(false), 3000);
     };
 
@@ -23,10 +23,10 @@ export default function ConnectionStatus({ className = '' }: ConnectionStatusPro
       setShowStatus(true);
     };
 
-    // 初期状態を設定
+    // Set initial state
     setIsOnline(navigator.onLine);
 
-    // イベントリスナーを追加
+    // Add event listeners
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
@@ -45,7 +45,7 @@ export default function ConnectionStatus({ className = '' }: ConnectionStatusPro
           {isOnline ? '🟢' : '🔴'}
         </div>
         <span className="status-text">
-          {isOnline ? 'インターネット接続が復旧しました' : 'インターネット接続がありません'}
+          {isOnline ? 'Internet connection restored' : 'No internet connection'}
         </span>
       </div>
       

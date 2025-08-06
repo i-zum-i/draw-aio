@@ -44,27 +44,19 @@ export class LLMService {
   private readonly MAX_CACHE_SIZE = 100;
 
   constructor() {
-    console.log('🔧 LLMService constructor called');
     const apiKey = process.env.ANTHROPIC_API_KEY;
-    console.log('🔑 API key in constructor:', apiKey ? `Found (${apiKey.length} chars)` : 'Not found');
 
     if (!apiKey) {
-      console.error('❌ ANTHROPIC_API_KEY not found in LLMService constructor');
       throw new Error('ANTHROPIC_API_KEY environment variable is required');
     }
 
-    console.log('🚀 Creating Anthropic client...');
     this.client = new Anthropic({
       apiKey: apiKey,
       timeout: 25000, // 25 second timeout for API calls
     });
 
-    console.log('✅ Anthropic client created successfully');
-
     // Clean cache periodically
     setInterval(() => this.cleanCache(), 10 * 60 * 1000); // Every 10 minutes
-
-    console.log('✅ LLMService constructor completed');
   }
 
   /**
@@ -76,17 +68,14 @@ export class LLMService {
       const cacheKey = this.generateCacheKey(prompt);
       const cachedResult = this.getFromCache(cacheKey);
       if (cachedResult) {
-        console.log('🎯 Cache hit for prompt');
         return cachedResult;
       }
-
-      console.log('🔄 Generating new diagram from LLM...');
       const systemPrompt = this.buildSystemPrompt();
       const userPrompt = this.buildUserPrompt(prompt);
 
       const response = await this.client.messages.create({
         model: 'claude-sonnet-4-20250514', // Claude Sonnet 4
-        max_tokens: 8192, // Claude Sonnet 4の最大トークン数
+        max_tokens: 8192, // Claude Sonnet 4 max tokens
         temperature: 0.2, // Lower temperature for more consistent results
         system: systemPrompt,
         messages: [
@@ -101,7 +90,7 @@ export class LLMService {
       const content = response.content[0];
       if (content.type !== 'text') {
         throw new LLMError(
-          'Claude APIから予期しないレスポンス形式を受信しました',
+          'Received unexpected response format from Claude API',
           LLMErrorCode.INVALID_RESPONSE
         );
       }
@@ -111,12 +100,9 @@ export class LLMService {
 
       // Cache the result
       this.saveToCache(cacheKey, xml);
-      console.log('💾 Cached LLM response');
 
       return xml;
     } catch (error) {
-      console.error('Error generating Draw.io XML:', error);
-
       // Re-throw LLMError as-is
       if (error instanceof LLMError) {
         throw error;
@@ -129,7 +115,7 @@ export class LLMService {
 
       // Handle unknown errors
       throw new LLMError(
-        '図生成中に不明なエラーが発生しました',
+        'Unknown error occurred during diagram generation',
         LLMErrorCode.UNKNOWN_ERROR,
         error as Error
       );
@@ -140,40 +126,40 @@ export class LLMService {
    * Build system prompt for Draw.io XML generation
    */
   private buildSystemPrompt(): string {
-    return `あなたはDraw.io形式のXMLを生成する専門家です。ユーザーの自然言語による図の説明を、Draw.io（diagrams.net）で開ける有効なXML形式に変換してください。
+    return `You are an expert at generating Draw.io XML format. Convert the user's natural language diagram description into valid XML format that can be opened in Draw.io (diagrams.net).
 
-重要な要件:
-1. 必ず有効なDraw.io XML形式で出力してください
-2. XMLは<mxfile>タグで始まり</mxfile>タグで終わる必要があります
-3. 図の要素は<mxCell>タグを使用して定義してください
-4. 適切な座標とサイズを設定してください
-5. 日本語テキストを正しく処理してください
-6. フローチャート、組織図、システム図など、適切な図の種類を選択してください
-7. AWSの構成図を作成する場合は以下の”AWS構成図作成ルール”に従ってください
+Important requirements:
+1. Always output in valid Draw.io XML format
+2. XML must start with <mxfile> tag and end with </mxfile> tag
+3. Define diagram elements using <mxCell> tags
+4. Set appropriate coordinates and sizes
+5. Handle text content correctly
+6. Choose appropriate diagram types like flowcharts, org charts, system diagrams, etc.
+7. For AWS architecture diagrams, follow the "AWS Diagram Rules" below
 
-AWS構成図作成ルール：
- 1. アイコンはdraw.ioの"AWS 2025"を利用してください。
- 2. 境界線やアイコンに文字を重ねないでください。余白を作り、視認性を上げることに努めてください。
- 3. アイコンのサイズは48×48で統一してください。
- 4. アイコン以下の説明分は以下に統一してください。
-    5-1. サービス名
-    5-2. リソース名（IDは記載しないこと）
- 5. 境界線は以下の通り表現してください。
+AWS Diagram Rules:
+ 1. Use draw.io "AWS 2025" icons
+ 2. Don't overlay text on borders or icons. Create margins to improve visibility
+ 3. Standardize icon size to 48×48
+ 4. Icon descriptions should include:
+    4-1. Service name
+    4-2. Resource name (do not include IDs)
+ 5. Express boundaries as follows:
     5-1. AWS Cloud
     5-2. Region
-    5-3. VPC ※末尾に()でCIDRを記入
+    5-3. VPC (add CIDR in parentheses at the end)
     5-4. Availability Zone
-    5-5. Subnet ※末尾に()でCIDRを記入
+    5-5. Subnet (add CIDR in parentheses at the end)
     5-6. Security Group
- 6. 拡張性を考慮して、境界線の余白は多めにしてください。
- 7. 視認性をよくしたいのでアイコン同士はなるべく近くに配置してください。
+ 6. Leave ample margins in boundaries considering scalability
+ 7. Place icons close together for better visibility
 
-出力形式:
-- XMLのみを出力してください（説明文は不要）
-- XMLは整形されている必要があります
-- 文字エンコーディングはUTF-8を使用してください
+Output format:
+- Output XML only (no explanatory text needed)
+- XML must be properly formatted
+- Use UTF-8 character encoding
 
-Draw.io XMLの基本構造例:
+Basic Draw.io XML structure example:
 \`\`\`xml
 <mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="AI" version="22.1.0">
   <diagram name="Page-1" id="page-id">
@@ -181,7 +167,7 @@ Draw.io XMLの基本構造例:
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <!-- 図の要素をここに配置 -->
+        <!-- Place diagram elements here -->
       </root>
     </mxGraphModel>
   </diagram>
@@ -193,17 +179,17 @@ Draw.io XMLの基本構造例:
    * Build user prompt with the specific diagram request
    */
   private buildUserPrompt(prompt: string): string {
-    return `以下の説明に基づいて、Draw.io形式のXMLを生成してください：
+    return `Generate Draw.io XML format based on the following description:
 
 ${prompt}
 
-要求:
-- 上記の説明を適切な図として表現してください
-- 要素間の関係を明確に示してください
-- 読みやすいレイアウトにしてください
-- 日本語のラベルやテキストを正しく処理してください
+Requirements:
+- Express the above description as an appropriate diagram
+- Clearly show relationships between elements
+- Create a readable layout
+- Handle labels and text correctly
 
-XMLのみを出力してください：`;
+Output XML only:`;
   }
 
   /**
@@ -215,7 +201,7 @@ XMLのみを出力してください：`;
     // Rate limit errors
     if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
       return new LLMError(
-        'AI サービスのレート制限に達しました。しばらく待ってから再試行してください',
+        'AI service rate limit reached. Please wait and try again',
         LLMErrorCode.RATE_LIMIT_ERROR,
         error
       );
@@ -224,7 +210,7 @@ XMLのみを出力してください：`;
     // Quota exceeded errors
     if (errorMessage.includes('quota') || errorMessage.includes('billing') || errorMessage.includes('credits')) {
       return new LLMError(
-        'AI サービスの利用制限に達しました。管理者にお問い合わせください',
+        'AI service usage limit reached. Please contact administrator',
         LLMErrorCode.QUOTA_EXCEEDED,
         error
       );
@@ -235,7 +221,7 @@ XMLのみを出力してください：`;
       !errorMessage.includes('connection') &&
       !errorMessage.includes('network')) {
       return new LLMError(
-        'AI サービスの応答がタイムアウトしました。再試行してください',
+        'AI service response timed out. Please try again',
         LLMErrorCode.TIMEOUT_ERROR,
         error
       );
@@ -248,7 +234,7 @@ XMLのみを出力してください：`;
       errorMessage.includes('enotfound') ||
       errorMessage.includes('fetch')) {
       return new LLMError(
-        'AI サービスに接続できません。ネットワーク接続を確認してから再試行してください',
+        'Cannot connect to AI service. Please check network connection and try again',
         LLMErrorCode.CONNECTION_ERROR,
         error
       );
@@ -260,7 +246,7 @@ XMLのみを出力してください：`;
       errorMessage.includes('api key') ||
       errorMessage.includes('401')) {
       return new LLMError(
-        'AI サービスの認証に失敗しました。設定を確認してください',
+        'AI service authentication failed. Please check configuration',
         LLMErrorCode.API_KEY_MISSING,
         error
       );
@@ -268,7 +254,7 @@ XMLのみを出力してください：`;
 
     // Default to unknown error
     return new LLMError(
-      'AI サービスでエラーが発生しました。しばらく待ってから再試行してください',
+      'An error occurred with the AI service. Please wait and try again',
       LLMErrorCode.UNKNOWN_ERROR,
       error
     );
@@ -292,7 +278,7 @@ XMLのみを出力してください：`;
     }
 
     throw new LLMError(
-      'AI が有効な図を生成できませんでした。別の説明を試してください',
+      'AI could not generate a valid diagram. Please try a different description',
       LLMErrorCode.INVALID_RESPONSE
     );
   }
@@ -305,28 +291,28 @@ XMLのみを出力してください：`;
       // Check for required root elements
       if (!xml.includes('<mxfile')) {
         throw new LLMError(
-          '生成されたXMLが無効です: mxfileタグが見つかりません',
+          'Generated XML is invalid: mxfile tag not found',
           LLMErrorCode.INVALID_XML
         );
       }
 
       if (!xml.includes('</mxfile>')) {
         throw new LLMError(
-          '生成されたXMLが無効です: mxfile終了タグが見つかりません',
+          'Generated XML is invalid: mxfile closing tag not found',
           LLMErrorCode.INVALID_XML
         );
       }
 
       if (!xml.includes('<mxGraphModel')) {
         throw new LLMError(
-          '生成されたXMLが無効です: mxGraphModelタグが見つかりません',
+          'Generated XML is invalid: mxGraphModel tag not found',
           LLMErrorCode.INVALID_XML
         );
       }
 
       if (!xml.includes('<root>')) {
         throw new LLMError(
-          '生成されたXMLが無効です: rootタグが見つかりません',
+          'Generated XML is invalid: root tag not found',
           LLMErrorCode.INVALID_XML
         );
       }
@@ -338,15 +324,13 @@ XMLのみを出力してください：`;
 
       // Self-closing tags count as both open and close
       if (openTags !== closeTags + selfClosingTags) {
-        console.warn('XML tag balance warning - may indicate malformed XML');
         // Don't throw error for tag balance issues as it might be a false positive
       }
 
       // Check for minimum content (at least one cell beyond the root cells)
       const cellMatches = xml.match(/<mxCell/g);
       if (!cellMatches || cellMatches.length < 2) {
-        console.warn('XML appears to have minimal content - may be empty diagram');
-        // Don't throw error as empty diagrams might be valid
+        // Empty diagrams might be valid - don't throw error
       }
 
     } catch (error) {
@@ -355,7 +339,7 @@ XMLのみを出力してください：`;
       }
 
       throw new LLMError(
-        'XMLの検証中にエラーが発生しました',
+        'Error occurred during XML validation',
         LLMErrorCode.INVALID_XML,
         error as Error
       );
@@ -427,9 +411,7 @@ XMLのみを出力してください：`;
       }
     }
 
-    if (cleanedCount > 0) {
-      console.log(`🧹 Cleaned ${cleanedCount} expired cache entries`);
-    }
+    // Cache cleanup completed silently
   }
 
   /**

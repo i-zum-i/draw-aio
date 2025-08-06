@@ -41,17 +41,19 @@ export class FileController {
       res.setHeader('Access-Control-Allow-Methods', 'GET');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
       
-      console.log('📁 Serving file:', {
-        fileId,
-        type: fileInfo.type,
-        contentType,
-        corsOrigin: allowedOrigin
-      });
+      // File serving details logged in development only
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Serving file:', {
+          fileId,
+          type: fileInfo.type,
+          contentType,
+          corsOrigin: allowedOrigin
+        });
+      }
       
       // Send the file
       res.sendFile(fileInfo.path, (err) => {
         if (err) {
-          console.error('Error serving file:', err);
           if (!res.headersSent) {
             res.status(500).json(ErrorHandler.createErrorResponse('Failed to serve file'));
           }
@@ -59,7 +61,6 @@ export class FileController {
       });
       
     } catch (error) {
-      console.error('Error in serveFile:', error);
       res.status(500).json(ErrorHandler.createErrorResponse('Internal server error'));
     }
   }

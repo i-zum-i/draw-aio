@@ -77,7 +77,7 @@ export default function ErrorMessage({
           <button 
             className="error-dismiss-button"
             onClick={onDismiss}
-            aria-label="エラーメッセージを閉じる"
+            aria-label="Close error message"
             type="button"
           >
             ✕

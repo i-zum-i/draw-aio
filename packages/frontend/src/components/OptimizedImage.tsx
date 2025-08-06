@@ -26,22 +26,18 @@ export default function OptimizedImage({
   const imgRef = useRef<HTMLImageElement>(null);
 
   const handleLoad = () => {
-    console.log('🖼️ Image loaded successfully:', src);
     setIsLoading(false);
     setHasError(false);
     onLoad?.();
   };
 
   const handleError = (event: React.SyntheticEvent<HTMLImageElement, Event>) => {
-    console.error('❌ Image load failed:', src, event);
-    console.error('❌ Image element:', event.currentTarget);
     setIsLoading(false);
     setHasError(true);
     onError?.();
   };
 
   const handleLoadStart = () => {
-    console.log('🔄 Image loading started:', src);
     setIsLoading(true);
     setHasError(false);
     onLoadStart?.();
@@ -49,37 +45,16 @@ export default function OptimizedImage({
 
   // Reset states when src changes
   React.useEffect(() => {
-    console.log('🔄 OptimizedImage src changed:', src);
     setHasError(false);
     setIsLoading(true);
-
-    // Debug image element state
-    if (imgRef.current) {
-      const img = imgRef.current;
-      console.log('🔍 Image element state:', {
-        src: img.src,
-        complete: img.complete,
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight,
-        readyState: img.readyState
-      });
-    }
   }, [src]);
 
   // Monitor image element after it's created
   useEffect(() => {
     const img = imgRef.current;
     if (img) {
-      console.log('🔍 Image element created:', {
-        src: img.src,
-        complete: img.complete,
-        naturalWidth: img.naturalWidth,
-        naturalHeight: img.naturalHeight
-      });
-
       // Check if image is already loaded
       if (img.complete && img.naturalWidth > 0) {
-        console.log('✅ Image was already loaded');
         handleLoad();
       }
     }
@@ -90,7 +65,7 @@ export default function OptimizedImage({
       <div className={`image-error ${className}`} style={style}>
         <div className="error-content">
           <div className="error-icon">🖼️</div>
-          <p>画像の読み込みに失敗しました</p>
+          <p>Failed to load image</p>
         </div>
         <style jsx>{`
           .image-error {
@@ -128,7 +103,7 @@ export default function OptimizedImage({
       {isLoading && (
         <div className="loading-placeholder">
           <div className="loading-spinner"></div>
-          <p>画像を読み込み中...</p>
+          <p>Loading image...</p>
         </div>
       )}
       
@@ -145,7 +120,6 @@ export default function OptimizedImage({
         style={{
           display: isLoading ? 'none' : 'block',
         }}
-        onProgress={(e) => console.log('📈 Image loading progress:', e)}
       />
       
       <style jsx>{`

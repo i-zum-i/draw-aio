@@ -1,0 +1,130 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="AI" version="22.1.0">
+  <diagram name="AWS構成図" id="aws-architecture">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Internet -->
+        <mxCell id="internet" value="インターネット" style="ellipse;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="500" y="50" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- WAF -->
+        <mxCell id="waf" value="AWS WAF" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="500" y="150" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ALB -->
+        <mxCell id="alb" value="Application Load Balancer (ALB)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="450" y="250" width="220" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- VPC -->
+        <mxCell id="vpc" value="VPC" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="350" width="700" height="400" as="geometry"/>
+        </mxCell>
+        
+        <!-- Public Subnet -->
+        <mxCell id="public-subnet" value="パブリックサブネット" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="380" width="660" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Private Subnet 1 -->
+        <mxCell id="private-subnet1" value="プライベートサブネット 1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="220" y="480" width="320" height="250" as="geometry"/>
+        </mxCell>
+        
+        <!-- Private Subnet 2 -->
+        <mxCell id="private-subnet2" value="プライベートサブネット 2" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="560" y="480" width="320" height="250" as="geometry"/>
+        </mxCell>
+        
+        <!-- EC2 Instance -->
+        <mxCell id="ec2" value="EC2インスタンス" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="250" y="520" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Docker Container -->
+        <mxCell id="docker" value="Docker&#xa;WEBサーバー" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0f0f0;strokeColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="250" y="600" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Aurora Primary -->
+        <mxCell id="aurora-primary" value="Aurora&#xa;(Primary)" style="cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="590" y="520" width="120" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Aurora Replica -->
+        <mxCell id="aurora-replica" value="Aurora&#xa;(Replica)" style="cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="730" y="520" width="120" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Internet Gateway -->
+        <mxCell id="igw" value="Internet Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="390" width="120" height="50" as="geometry"/>
+        </mxCell>
+        
+        <!-- Connections -->
+        <mxCell id="conn1" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="internet" target="waf">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn2" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="waf" target="alb">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="300" as="sourcePoint"/>
+            <mxPoint x="450" y="250" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn3" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="alb" target="igw">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="350" as="sourcePoint"/>
+            <mxPoint x="450" y="300" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn4" value="リバースプロキシ" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="igw" target="ec2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="400" as="sourcePoint"/>
+            <mxPoint x="450" y="350" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn5" value="" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="ec2" target="docker">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="450" as="sourcePoint"/>
+            <mxPoint x="450" y="400" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn6" value="DB接続" style="endArrow=classic;html=1;rounded=0;" edge="1" parent="1" source="docker" target="aurora-primary">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="500" as="sourcePoint"/>
+            <mxPoint x="450" y="450" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="conn7" value="レプリケーション" style="endArrow=classic;html=1;rounded=0;dashed=1;" edge="1" parent="1" source="aurora-primary" target="aurora-replica">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="550" as="sourcePoint"/>
+            <mxPoint x="450" y="500" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- Labels -->
+        <mxCell id="label1" value="HTTPS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="120" width="40" height="20" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="label2" value="HTTP/HTTPS" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="520" y="220" width="80" height="20" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

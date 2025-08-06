@@ -19,7 +19,7 @@ export default function MainPage() {
   const networkStatus = useNetworkStatus();
 
   const handleFormSubmit = async (text: string) => {
-    setLastPrompt(text); // 再試行用に保存
+    setLastPrompt(text); // Save for retry
     await performDiagramGeneration(text);
   };
 
@@ -28,22 +28,22 @@ export default function MainPage() {
     setErrorInfo(null);
     setResult(null);
 
-    // ネットワーク状態をチェック
+    // Check network status
     if (!networkStatus.isOnline) {
       setErrorInfo({
-        message: 'インターネット接続がありません。接続を確認してから再試行してください。',
+        message: 'No internet connection. Please check your connection and try again.',
         type: 'error',
         isRetryable: true,
-        userAction: 'ネットワーク接続を確認して再試行'
+        userAction: 'Check network connection and retry'
       });
       setIsLoading(false);
       return;
     }
 
-    // 接続が遅い場合の警告
+    // Warning for slow connection
     if (networkStatus.isSlowConnection) {
       setErrorInfo({
-        message: '接続が遅いため、処理に時間がかかる場合があります。',
+        message: 'Slow connection detected. Processing may take longer than usual.',
         type: 'info',
         isRetryable: false
       });
@@ -53,12 +53,6 @@ export default function MainPage() {
     const startTime = Date.now();
     
     try {
-      console.log('🌐 Network status:', {
-        connectionType: networkStatus.connectionType,
-        isOnline: networkStatus.isOnline,
-        isSlowConnection: networkStatus.isSlowConnection,
-        timeoutMs: timeout
-      });
       
       const response = await fetchWithRetry('/api/generate-diagram', {
         method: 'POST',
@@ -66,42 +60,30 @@ export default function MainPage() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: text }),
-      }, 2, 1000, timeout); // 最大2回再試行、1秒間隔、動的タイムアウト
+      }, 2, 1000, timeout); // Max 2 retries, 1 second interval, dynamic timeout
       
-      const duration = Date.now() - startTime;
-      console.log('⏱️ Request completed:', {
-        duration: `${duration}ms`,
-        timeoutUsed: `${timeout}ms`,
-        status: response.status
-      });
 
       if (response.ok) {
         const data: DiagramResponse = await response.json();
         
         if (data.status === 'success') {
           setResult(data);
-          setRetryCount(0); // 成功時はリトライカウントをリセット
+          setRetryCount(0); // Reset retry count on success
         } else {
-          // サーバーからのエラーレスポンス
+          // Error response from server
           setErrorInfo({
-            message: data.message || '図の生成に失敗しました。',
+            message: data.message || 'Failed to generate diagram.',
             type: 'error',
             isRetryable: true,
-            userAction: '入力内容を確認して再試行'
+            userAction: 'Check input and try again'
           });
         }
       } else {
-        // HTTPエラーレスポンス
+        // HTTP error response
         const errorInfo = await ErrorHandler.extractErrorFromResponse(response);
         setErrorInfo(errorInfo);
       }
     } catch (err) {
-      const duration = Date.now() - startTime;
-      console.error('❌ API request failed:', {
-        error: err,
-        duration: `${duration}ms`,
-        timeoutUsed: `${timeout}ms`
-      });
       const errorInfo = ErrorHandler.handleError(err);
       setErrorInfo(errorInfo);
     } finally {
@@ -136,8 +118,8 @@ export default function MainPage() {
         <div className="container">
           <div className="intro-section">
             <p className="intro-text">
-              自然言語の説明からDraw.io形式の図を自動生成します。
-              作成したい図の内容を日本語で入力してください。
+              Automatically generate Draw.io diagrams from natural language descriptions.
+              Please describe the diagram you want to create.
             </p>
           </div>
           

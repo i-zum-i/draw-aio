@@ -29,12 +29,15 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ): void => {
-  console.error('Error occurred:', {
-    message: error.message,
-    stack: error.stack,
-    url: req.url,
-    method: req.method,
-  });
+  // Log errors only in development or for critical server errors
+  if (process.env.NODE_ENV === 'development') {
+    console.error('Error occurred:', {
+      message: error.message,
+      stack: error.stack,
+      url: req.url,
+      method: req.method,
+    });
+  }
 
   let statusCode = 500;
   let code = 'INTERNAL_ERROR';

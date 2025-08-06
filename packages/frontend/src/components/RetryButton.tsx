@@ -15,7 +15,7 @@ export default function RetryButton({
   isLoading = false, 
   disabled = false,
   className = '',
-  children = '再試行'
+  children = 'Retry'
 }: RetryButtonProps) {
   const handleClick = () => {
     if (!isLoading && !disabled) {
@@ -29,12 +29,12 @@ export default function RetryButton({
       onClick={handleClick}
       disabled={isLoading || disabled}
       type="button"
-      aria-label="再試行"
+      aria-label="Retry"
     >
       {isLoading ? (
         <>
           <span className="spinner"></span>
-          再試行中...
+          Retrying...
         </>
       ) : (
         <>

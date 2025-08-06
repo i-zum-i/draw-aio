@@ -17,16 +17,16 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // 入力検証
+    // Input validation
     setValidationError(null);
     
     if (!inputText.trim()) {
-      setValidationError('図の説明を入力してください。');
+      setValidationError('Please enter a description for the diagram.');
       return;
     }
     
     if (inputText.length > 10000) {
-      setValidationError('入力テキストが長すぎます。10,000文字以内で入力してください。');
+      setValidationError('Input text is too long. Please keep it within 10,000 characters.');
       return;
     }
     
@@ -35,7 +35,7 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInputText(e.target.value);
-    // 入力中にバリデーションエラーをクリア
+    // Clear validation error while typing
     if (validationError) {
       setValidationError(null);
     }
@@ -59,12 +59,12 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
       )}
       <form onSubmit={handleSubmit} className="input-form">
         <label htmlFor="diagram-input" className="input-label">
-          図の説明を入力してください
+          Enter diagram description
         </label>
         <textarea
           id="diagram-input"
           className="diagram-input"
-          placeholder="例：ユーザー登録からログインまでのフローチャートを作成してください。ユーザーが情報を入力し、バリデーションを行い、データベースに保存する流れを含めてください。"
+          placeholder="Example: Create a flowchart from user registration to login. Include user information input, validation, and database storage flow."
           rows={6}
           value={inputText}
           onChange={handleTextChange}
@@ -72,7 +72,7 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
         />
         <div className="input-info">
           <span className="char-count">
-            {inputText.length}/10,000文字
+            {inputText.length}/10,000 characters
           </span>
         </div>
         <div className="button-container">
@@ -84,10 +84,10 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
             {isLoading ? (
               <>
                 <span className="spinner"></span>
-                生成中...
+                Generating...
               </>
             ) : (
-              '図を作成'
+              'Create Diagram'
             )}
           </button>
           <button
@@ -96,7 +96,7 @@ export default function InputForm({ onSubmit, onClear, isLoading, hasResult }: I
             onClick={handleClear}
             disabled={isLoading || !hasResult}
           >
-            クリア
+            Clear
           </button>
         </div>
       </form>

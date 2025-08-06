@@ -7,7 +7,7 @@ export interface ErrorInfo {
 
 export class ErrorHandler {
   /**
-   * ネットワークエラーかどうかを判定
+   * Check if error is a network error
    */
   static isNetworkError(error: Error): boolean {
     return (
@@ -20,7 +20,7 @@ export class ErrorHandler {
   }
 
   /**
-   * タイムアウトエラーかどうかを判定
+   * Check if error is a timeout error
    */
   static isTimeoutError(error: Error): boolean {
     return (
@@ -31,124 +31,124 @@ export class ErrorHandler {
   }
 
   /**
-   * サーバーエラーかどうかを判定
+   * Check if error is a server error
    */
   static isServerError(status?: number): boolean {
     return status !== undefined && status >= 500;
   }
 
   /**
-   * クライアントエラーかどうかを判定
+   * Check if error is a client error
    */
   static isClientError(status?: number): boolean {
     return status !== undefined && status >= 400 && status < 500;
   }
 
   /**
-   * エラーを分類してユーザーフレンドリーなメッセージに変換
+   * Categorize error and convert to user-friendly message
    */
   static categorizeError(error: Error, response?: Response): ErrorInfo {
     const status = response?.status;
 
-    // ネットワークエラー
+    // Network error
     if (this.isNetworkError(error)) {
       return {
-        message: 'インターネット接続を確認してください。接続が安定していることを確認して再試行してください。',
+        message: 'Please check your internet connection. Ensure connection is stable and try again.',
         type: 'error',
         isRetryable: true,
-        userAction: 'ネットワーク接続を確認して再試行'
+        userAction: 'Check network connection and retry'
       };
     }
 
-    // タイムアウトエラー
+    // Timeout error
     if (this.isTimeoutError(error)) {
       return {
-        message: 'リクエストがタイムアウトしました。サーバーが混雑している可能性があります。しばらく待ってから再試行してください。',
+        message: 'Request timed out. Server might be busy. Please wait and try again.',
         type: 'warning',
         isRetryable: true,
-        userAction: 'しばらく待ってから再試行'
+        userAction: 'Wait and try again'
       };
     }
 
-    // サーバーエラー (5xx)
+    // Server error (5xx)
     if (this.isServerError(status)) {
       return {
-        message: 'サーバーで一時的な問題が発生しています。しばらく待ってから再試行してください。',
+        message: 'Server is experiencing temporary issues. Please wait and try again.',
         type: 'error',
         isRetryable: true,
-        userAction: 'しばらく待ってから再試行'
+        userAction: 'Wait and try again'
       };
     }
 
-    // クライアントエラー (4xx)
+    // Client error (4xx)
     if (this.isClientError(status)) {
       if (status === 400) {
         return {
-          message: '入力内容に問題があります。図の説明を確認して再度お試しください。',
+          message: 'Input content has issues. Please check the diagram description and try again.',
           type: 'warning',
           isRetryable: true,
-          userAction: '入力内容を確認して再試行'
+          userAction: 'Check input content and retry'
         };
       }
       if (status === 413) {
         return {
-          message: '入力テキストが長すぎます。短くしてから再試行してください。',
+          message: 'Input text is too long. Please shorten it and try again.',
           type: 'warning',
           isRetryable: true,
-          userAction: '入力テキストを短くして再試行'
+          userAction: 'Shorten input text and retry'
         };
       }
       if (status === 429) {
         return {
-          message: 'リクエストが多すぎます。しばらく待ってから再試行してください。',
+          message: 'Too many requests. Please wait and try again.',
           type: 'warning',
           isRetryable: true,
-          userAction: 'しばらく待ってから再試行'
+          userAction: 'Wait and try again'
         };
       }
       return {
-        message: 'リクエストに問題があります。入力内容を確認してください。',
+        message: 'Request has issues. Please check the input content.',
         type: 'warning',
         isRetryable: true,
-        userAction: '入力内容を確認して再試行'
+        userAction: 'Check input content and retry'
       };
     }
 
-    // その他のエラー
+    // Other errors
     return {
-      message: '予期しないエラーが発生しました。しばらく待ってから再試行してください。',
+      message: 'An unexpected error occurred. Please wait and try again.',
       type: 'error',
       isRetryable: true,
-      userAction: 'しばらく待ってから再試行'
+      userAction: 'Wait and try again'
     };
   }
 
   /**
-   * APIレスポンスからエラー情報を抽出
+   * Extract error information from API response
    */
   static async extractErrorFromResponse(response: Response): Promise<ErrorInfo> {
     try {
       const data = await response.json();
       
-      // サーバーからのエラーメッセージがある場合
+      // If server provides error message
       if (data.message) {
         return {
           message: data.message,
           type: this.isServerError(response.status) ? 'error' : 'warning',
           isRetryable: this.isServerError(response.status) || response.status === 429,
-          userAction: this.isServerError(response.status) ? 'しばらく待ってから再試行' : '入力内容を確認して再試行'
+          userAction: this.isServerError(response.status) ? 'Wait and try again' : 'Check input content and retry'
         };
       }
     } catch (parseError) {
-      // JSON解析に失敗した場合はステータスコードベースで判定
+      // If JSON parsing fails, categorize based on status code
     }
 
-    // ステータスコードベースでエラーを分類
+    // Categorize error based on status code
     return this.categorizeError(new Error(`HTTP ${response.status}`), response);
   }
 
   /**
-   * 汎用的なエラーハンドリング
+   * Generic error handling
    */
   static handleError(error: unknown, response?: Response): ErrorInfo {
     if (error instanceof Error) {
@@ -164,7 +164,7 @@ export class ErrorHandler {
     }
 
     return {
-      message: '不明なエラーが発生しました。',
+      message: 'Unknown error occurred.',
       type: 'error',
       isRetryable: false
     };
@@ -172,7 +172,7 @@ export class ErrorHandler {
 }
 
 /**
- * フェッチリクエストにタイムアウトを追加
+ * Add timeout to fetch requests
  */
 export function fetchWithTimeout(
   url: string, 
@@ -200,7 +200,7 @@ export function fetchWithTimeout(
 }
 
 /**
- * 再試行機能付きフェッチ
+ * Fetch with retry functionality
  */
 export async function fetchWithRetry(
   url: string,
@@ -215,12 +215,12 @@ export async function fetchWithRetry(
     try {
       const response = await fetchWithTimeout(url, options, timeoutMs);
       
-      // 成功またはクライアントエラーの場合は再試行しない
+      // Don't retry on success or client errors
       if (response.ok || ErrorHandler.isClientError(response.status)) {
         return response;
       }
       
-      // サーバーエラーの場合は再試行
+      // Retry on server errors
       if (attempt < maxRetries && ErrorHandler.isServerError(response.status)) {
         await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
         continue;
@@ -230,7 +230,7 @@ export async function fetchWithRetry(
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
       
-      // 最後の試行でない場合は再試行
+      // Retry if not the last attempt
       if (attempt < maxRetries && ErrorHandler.isNetworkError(lastError)) {
         await new Promise(resolve => setTimeout(resolve, retryDelay * Math.pow(2, attempt)));
         continue;

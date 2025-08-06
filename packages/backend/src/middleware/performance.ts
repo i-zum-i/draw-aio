@@ -7,7 +7,7 @@ export const requestTimeout = (timeoutMs: number = 30000) => {
       if (!res.headersSent) {
         res.status(408).json({
           status: 'error',
-          message: 'リクエストがタイムアウトしました。しばらく待ってから再試行してください。',
+          message: 'Request timed out. Please wait and try again.',
           code: 'REQUEST_TIMEOUT'
         });
       }
@@ -75,7 +75,7 @@ export const rateLimit = (maxRequests: number = 10, windowMs: number = 60000) =>
     if (count > maxRequests) {
       return res.status(429).json({
         status: 'error',
-        message: 'リクエスト制限に達しました。しばらく待ってから再試行してください。',
+        message: 'Rate limit exceeded. Please wait and try again.',
         code: 'RATE_LIMIT_EXCEEDED',
         retryAfter: Math.ceil((resetTime - now) / 1000)
       });
@@ -110,19 +110,9 @@ export const performanceLogger = (req: Request, res: Response, next: NextFunctio
     const { method, url } = req;
     const { statusCode } = res;
     
-    // Log slow requests (> 5 seconds)
-    if (duration > 5000) {
-      console.warn(`🐌 Slow request: ${method} ${url} - ${statusCode} - ${duration}ms`);
-    }
-    
-    // Log errors
-    if (statusCode >= 400) {
-      console.error(`❌ Error request: ${method} ${url} - ${statusCode} - ${duration}ms`);
-    }
-    
-    // Log successful requests in development
-    if (process.env.NODE_ENV === 'development' && statusCode < 400) {
-      console.log(`✅ ${method} ${url} - ${statusCode} - ${duration}ms`);
+    // Log slow requests (> 5 seconds) in development only
+    if (process.env.NODE_ENV === 'development' && duration > 5000) {
+      console.warn(`Slow request: ${method} ${url} - ${statusCode} - ${duration}ms`);
     }
   });
   
@@ -134,9 +124,9 @@ export const memoryMonitor = (req: Request, res: Response, next: NextFunction) =
   const memUsage = process.memoryUsage();
   const heapUsedMB = Math.round(memUsage.heapUsed / 1024 / 1024);
   
-  // Warn if memory usage is high (> 500MB)
-  if (heapUsedMB > 500) {
-    console.warn(`⚠️ High memory usage: ${heapUsedMB}MB`);
+  // Warn if memory usage is high (> 500MB) in development only
+  if (process.env.NODE_ENV === 'development' && heapUsedMB > 500) {
+    console.warn(`High memory usage: ${heapUsedMB}MB`);
   }
   
   // Add memory info to response headers in development

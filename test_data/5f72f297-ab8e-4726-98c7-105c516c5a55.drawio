@@ -1,0 +1,193 @@
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="AI" version="22.1.0">
+  <diagram name="Page-1" id="page-id">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- タイトル -->
+        <mxCell id="title" value="飛行機搭乗者のカスタマージャーニー" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="20" width="300" height="30" as="geometry"/>
+        </mxCell>
+        
+        <!-- フェーズヘッダー -->
+        <mxCell id="phase1" value="事前準備" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="120" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="phase2" value="空港到着・手続き" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="280" y="80" width="140" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="phase3" value="搭乗・フライト" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="500" y="80" width="120" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="phase4" value="到着・完了" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="80" width="120" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ1: 航空券購入 -->
+        <mxCell id="step1" value="航空券購入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="160" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ2: 座席選択 -->
+        <mxCell id="step2" value="座席選択・&#10;オプション追加" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ3: チェックイン -->
+        <mxCell id="step3" value="オンライン&#10;チェックイン" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="340" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ4: 空港到着 -->
+        <mxCell id="step4" value="空港到着" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="280" y="160" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ5: 荷物預け -->
+        <mxCell id="step5" value="荷物預け・&#10;カウンター手続き" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="280" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ6: 保安検査 -->
+        <mxCell id="step6" value="保安検査・&#10;出国手続き" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="280" y="340" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ7: 搭乗待機 -->
+        <mxCell id="step7" value="搭乗ゲート待機" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="280" y="430" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ8: 搭乗 -->
+        <mxCell id="step8" value="搭乗手続き・&#10;座席着席" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="160" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ9: フライト -->
+        <mxCell id="step9" value="フライト・&#10;機内サービス" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ10: 着陸 -->
+        <mxCell id="step10" value="着陸・降機" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="500" y="340" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ11: 荷物受取 -->
+        <mxCell id="step11" value="荷物受取・&#10;入国手続き" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="700" y="160" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- ステップ12: 目的地到着 -->
+        <mxCell id="step12" value="目的地到着" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="700" y="250" width="120" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- 矢印接続 -->
+        <mxCell id="arrow1" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step1" target="step2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="140" y="230" as="sourcePoint"/>
+            <mxPoint x="140" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow2" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step2" target="step3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="140" y="320" as="sourcePoint"/>
+            <mxPoint x="140" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow3" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step3" target="step4">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="210" y="370" as="sourcePoint"/>
+            <mxPoint x="270" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow4" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step4" target="step5">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="230" as="sourcePoint"/>
+            <mxPoint x="340" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow5" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step5" target="step6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="320" as="sourcePoint"/>
+            <mxPoint x="340" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow6" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step6" target="step7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="340" y="410" as="sourcePoint"/>
+            <mxPoint x="340" y="420" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow7" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step7" target="step8">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="410" y="460" as="sourcePoint"/>
+            <mxPoint x="490" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow8" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step8" target="step9">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="230" as="sourcePoint"/>
+            <mxPoint x="560" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow9" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step9" target="step10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="320" as="sourcePoint"/>
+            <mxPoint x="560" y="330" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow10" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="step10" target="step11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="630" y="370" as="sourcePoint"/>
+            <mxPoint x="690" y="190" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="arrow11" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="step11" target="step12">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="760" y="230" as="sourcePoint"/>
+            <mxPoint x="760" y="240" as="targetPoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <!-- タッチポイント -->
+        <mxCell id="touchpoint1" value="Webサイト/アプリ" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="20" y="520" width="80" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="touchpoint2" value="空港カウンター" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="220" y="520" width="80" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="touchpoint3" value="機内" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="440" y="520" width="80" height="40" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="touchpoint4" value="到着ロビー" style="ellipse;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="640" y="520" width="80" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- タッチポイントラベル -->
+        <mxCell id="touchpoint_label" value="主要タッチポイント" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="350" y="580" width="120" height="20" as="geometry"/>
+        </mxCell>
+        
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

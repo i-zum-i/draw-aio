@@ -16,19 +16,16 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
   const [downloadAttempted, setDownloadAttempted] = useState(false);
 
   const handleImageLoad = () => {
-    console.log('🖼️ ResultDisplay: Image loaded successfully');
     setImageLoading(false);
     setImageError(false);
   };
 
   const handleImageError = () => {
-    console.error('❌ ResultDisplay: Image load failed');
     setImageLoading(false);
     setImageError(true);
   };
 
   const handleImageLoadStart = () => {
-    console.log('🔄 ResultDisplay: Image loading started');
     setImageLoading(true);
     setImageError(false);
   };
@@ -58,53 +55,30 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
     }
   }, [result?.downloadUrl]); // Reset when downloadUrl changes (new diagram)
 
-  // Debug log image loading states
-  useEffect(() => {
-    console.log('📊 Image states changed:', {
-      imageLoading,
-      imageError,
-      hasResult: !!result,
-      hasImageUrl: !!(result?.imageUrl)
-    });
-  }, [imageLoading, imageError, result]);
-
-  // Debug log when result changes
-  useEffect(() => {
-    if (result) {
-      console.log('🎯 ResultDisplay received result:', {
-        hasImageUrl: !!result.imageUrl,
-        imageUrl: result.imageUrl,
-        hasDownloadUrl: !!result.downloadUrl,
-        downloadUrl: result.downloadUrl,
-        message: result.message
-      });
-    }
-  }, [result]);
-
   return (
     <div className="result-section">
       {result && (
         <div className="result-content">
           {result.imageUrl && (
             <div className="image-section">
-              <h3 className="section-title">生成された図</h3>
+              <h3 className="section-title">Generated Diagram</h3>
               <div className="image-container">
                 {imageLoading && (
                   <div className="image-loading">
                     <div className="loading-spinner"></div>
-                    <p>画像を読み込み中...</p>
+                    <p>Loading image...</p>
                   </div>
                 )}
                 
                 {imageError && (
                   <div className="image-error">
                     <div className="error-icon-large">🖼️</div>
-                    <p>画像の読み込みに失敗しました</p>
+                    <p>Failed to load image</p>
                     <button 
                       className="retry-image-button"
                       onClick={resetImageStates}
                     >
-                      再試行
+                      Retry
                     </button>
                   </div>
                 )}
@@ -123,32 +97,32 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
           
           {result.downloadUrl && (
             <div className="download-section">
-              <h3 className="section-title">ファイルダウンロード</h3>
+              <h3 className="section-title">File Download</h3>
               <div className="download-container">
                 <p className="download-description">
-                  Draw.ioで編集可能な形式でダウンロードできます
+                  Download the diagram file in a format that can be edited with Draw.io
                 </p>
                 <div className="download-actions">
                   <a 
                     href={result.downloadUrl.replace('http://localhost:3001', '')} 
                     download
                     className="download-link"
-                    aria-label=".drawioファイルをダウンロード"
+                    aria-label="Download .drawio file"
                     onClick={handleDownloadClick}
                   >
                     <span className="download-icon">📁</span>
-                    .drawioファイルをダウンロード
+                    Download .drawio file
                   </a>
                   {downloadAttempted && (
                     <div className="download-feedback">
                       <span className="feedback-icon">✅</span>
-                      <span className="feedback-text">ダウンロードを開始しました</span>
+                      <span className="feedback-text">Download started</span>
                     </div>
                   )}
                 </div>
                 <div className="download-info">
                   <p className="info-text">
-                    💡 ダウンロードしたファイルは<a href="https://app.diagrams.net/" target="_blank" rel="noopener noreferrer" className="external-link">Draw.io</a>で開いて編集できます
+                    💡 Downloaded files can be opened and edited in <a href="https://app.diagrams.net/" target="_blank" rel="noopener noreferrer" className="external-link">Draw.io</a>
                   </p>
                 </div>
               </div>
@@ -167,8 +141,8 @@ export default function ResultDisplay({ result, error, onErrorDismiss }: ResultD
       {!result && (
         <div className="result-placeholder">
           <div className="placeholder-icon">📊</div>
-          <h3>図の生成結果がここに表示されます</h3>
-          <p>上のフォームに図の説明を入力して「作成」ボタンを押してください</p>
+          <h3>Diagram generation results will be displayed here</h3>
+          <p>Enter a description of your diagram in the form above and press "Create Diagram"</p>
         </div>
       )}
       

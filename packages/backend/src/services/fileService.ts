@@ -150,8 +150,7 @@ export class FileService {
     try {
       await fs.unlink(tempFile.path);
     } catch (error) {
-      // File might already be deleted, log but don't throw
-      console.warn(`Failed to delete file ${tempFile.path}:`, error);
+      // File might already be deleted, fail silently
     }
     
     this.tempFiles.delete(fileId);
@@ -174,7 +173,8 @@ export class FileService {
       await this.deleteFile(fileId);
     }
     
-    if (expiredFiles.length > 0) {
+    // Silent cleanup - log only in development
+    if (expiredFiles.length > 0 && process.env.NODE_ENV === 'development') {
       console.log(`Cleaned up ${expiredFiles.length} expired files`);
     }
   }
@@ -186,7 +186,10 @@ export class FileService {
     // Run cleanup every hour
     this.cleanupInterval = setInterval(() => {
       this.cleanupExpiredFiles().catch(error => {
-        console.error('Error during scheduled cleanup:', error);
+        // Log cleanup errors only in development
+        if (process.env.NODE_ENV === 'development') {
+          console.error('Error during scheduled cleanup:', error);
+        }
       });
     }, 60 * 60 * 1000); // 1 hour
   }
